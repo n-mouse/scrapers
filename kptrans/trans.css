@@ -1,0 +1,56 @@
+ body {
+ 	padding: 20px
+ }
+ 
+  header section {
+	  display: inline-block;
+	  text-align: center;
+	  
+   }
+   
+	table tr td:first-child {
+	  font-weight: 700	
+	}
+	
+table {
+	width: 45%;
+	border-collapse: collapse
+}
+
+table tr td {
+	padding: 10px;
+}
+
+table tr:nth-child(even) {background-color: #f2f2f2}
+
+section span {
+	padding: 10px 10px 10px 0;
+	display: inline-block;
+	font-weight: bold
+}
+
+section:last-child {
+	padding-bottom: 15px
+}
+
+table.left {
+	float: left;
+	margin-right: 5%
+}
+ table.right {
+ 	float: right;
+ 	margin-left: 5%
+ }
+
+caption {
+	text-align: left;
+	padding: 10px;
+	font-weight: 700
+}
+
+table.left caption {
+	background-color: #79C4E0;	
+}
+table.right caption {
+	background-color: #E2814D;	
+}

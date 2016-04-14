@@ -46,7 +46,7 @@ class StationHtmlFactory
   end
   
   def head
-    "<!DOCTYPE html><head><meta charset=\"UTF-8\"></head>"
+    "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"></head>"
   end
   
   def table_robochi
@@ -56,9 +56,9 @@ class StationHtmlFactory
       array.each do |min|
         minutes << "<td>#{min}</td>"
       end
-      rows << "<tr><td>#{key}</td>"+minutes+"</td>"
+      rows << "<tr><td>#{key}</td>"+minutes+"</tr>"
     end
-    "<table>"+rows+"</table>"
+    "<table class=\"left\">"+head_robochi+rows+"</table>"
   end
   
   def table_vyhidni
@@ -68,25 +68,25 @@ class StationHtmlFactory
       array.each do |min|
         minutes << "<td>#{min}</td>"
       end
-      rows << "<tr><td>#{key}</td>"+minutes+"</td>"
+      rows << "<tr><td>#{key}</td>"+minutes+"</tr>"
     end
-    "<table>"+rows+"</table>"
+    "<table class=\"right\">"+head_vyhidni+rows+"</table>"
   end
   
   def head_robochi
-    "<div class=\"period\">Будні дні</div>"
+    "<caption>Будні дні</caption>"
   end
   
   def head_vyhidni
-    "<div class=\"period\">Святкові та вихідні дні</div>"
+    "<caption>Святкові та вихідні дні</caption>"
   end
   
   def header
-    "<body><div class=\"header\"><section><span>#{type}</span><span>#{number}</span></section>""<section>#{route}</section></div>"
+    "<div class=\"header\"><section><span>#{type}</span><span>#{number}</span></section>""<section>#{route}</section></div>"
   end
   
   def body
-    "<body>"+header+head_robochi+table_robochi+head_vyhidni+table_vyhidni+"</body>"
+    "<body>"+header+table_robochi+table_vyhidni+"</body></html>"
   end
 
 end
@@ -283,6 +283,7 @@ transport = Transport.new(csv, csv2, "Автобус", 11)
 transport.stations_there_full.each do |station|
   puts station
   factory = StationHtmlFactory.new(station)
+  puts factory.html
   filemaker = FileMaker.new(:html=>factory.html, :type=>"avtobus", :css=>"/home/mouse/Projects/SFA/scrapers/kptrans/trans.css", :where=>"there", :station=>station[:station], :number=>"11")
   filemaker.pdf
 end
