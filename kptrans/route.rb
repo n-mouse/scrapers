@@ -46,35 +46,63 @@ class StationHtmlFactory
   end
   
   def head
-    "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"></head>"
+    "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><link rel=\"stylesheet\" type=\"text/css\" href=\"trans.css\"></head>"
   end
   
   def table_robochi
-    rows = ""
-    robochi_hash.each do |key, array|
-      minutes = ""
-      array.each do |min|
-        minutes << "<td>#{min}</td>"
-      end
-      rows << "<tr><td>#{key}</td>"+minutes+"</tr>"
+    hours = "<tr  class='hours'>"
+    robochi_hash.keys.each do |key|
+      hours << "<td>#{key}</td>"
     end
-    "<table class=\"left\">"+head_robochi+rows+"</table>"
+    hours << "</tr>"
+    minutes = ""
+    max = 0
+    robochi_hash.each do |key, array|
+      max = array.count if max < array.count
+    end
+    max.times do |i|
+      row = "<tr>"
+      robochi_hash.each do |key, array|
+        if array[i]
+          row << "<td>#{array[i]}</td>"
+        else
+          row << "<td></td>"
+        end
+      end 
+      row << "</tr>"  
+      minutes << row  
+    end
+    "<table class=\"top\">"+head_robochi+hours+minutes+"</table>"
   end
   
   def table_vyhidni
-    rows = ""
-    vyhidni_hash.each do |key, array|
-      minutes = ""
-      array.each do |min|
-        minutes << "<td>#{min}</td>"
-      end
-      rows << "<tr><td>#{key}</td>"+minutes+"</tr>"
+    hours = "<tr>"
+    vyhidni_hash.keys.each do |key|
+      hours << "<td class='hours'>#{key}</td>"
     end
-    "<table class=\"right\">"+head_vyhidni+rows+"</table>"
+    hours << "</tr>"
+    minutes = ""
+    max = 0
+    vyhidni_hash.each do |key, array|
+      max = array.count if max < array.count
+    end
+    max.times do |i|
+      row = "<tr>"
+      vyhidni_hash.each do |key, array|
+        if array[i]
+          row << "<td>#{array[i]}</td>"
+        else
+          row << "<td></td>"
+        end
+      end 
+      row << "</tr>"  
+      minutes << row  
+    end
+    "<table class=\"top\">"+head_vyhidni+hours+minutes+"</table>"
   end
   
   def head_robochi
-    "<caption>Будні дні</caption>"
+    "<caption>Робочі дні</caption>"
   end
   
   def head_vyhidni
@@ -82,7 +110,7 @@ class StationHtmlFactory
   end
   
   def header
-    "<div class=\"header\"><section><span>#{type}</span><span>#{number}</span></section>""<section>#{route}</section></div>"
+    "<div class=\"header\"><span class='number'>#{number}</span><img src=\"avt.PNG\" /></span><span class='rout'>#{route}</span></div>"
   end
   
   def body
@@ -275,17 +303,20 @@ end
 
 
 
-csv = CSV.read("/home/mouse/Projects/SFA/scrapers/kptrans/schedules/avtobus/robochi_route11.csv", "r:Windows-1251:UTF-8", {:col_sep => ";", :quote_char => "|"})
-csv2 = CSV.read("/home/mouse/Projects/SFA/scrapers/kptrans/schedules/avtobus/vyhidni_route11.csv", "r:Windows-1251:UTF-8", {:col_sep => ";", :quote_char => "|"})
+csv = CSV.read("/home/mouse/Projects/SFA/scrapers/kptrans/schedules/avtobus/robochi/robochi_route11.csv", "r:Windows-1251:UTF-8", {:col_sep => ";", :quote_char => "|"})
+csv2 = CSV.read("/home/mouse/Projects/SFA/scrapers/kptrans/schedules/avtobus/vyh/vyhidni_route11.csv", "r:Windows-1251:UTF-8", {:col_sep => ";", :quote_char => "|"})
 
 transport = Transport.new(csv, csv2, "Автобус", 11)
 
 transport.stations_there_full.each do |station|
-  puts station
+  #puts station
   factory = StationHtmlFactory.new(station)
-  puts factory.html
-  filemaker = FileMaker.new(:html=>factory.html, :type=>"avtobus", :css=>"/home/mouse/Projects/SFA/scrapers/kptrans/trans.css", :where=>"there", :station=>station[:station], :number=>"11")
-  filemaker.pdf
+  
+   File.open('/home/mouse/Projects/SFA/scrapers/kptrans/'+station[:station]+station[:number].to_s+".html", "wb") do |file|
+     file.write factory.html
+  end
+  #filemaker = FileMaker.new(:html=>factory.html, :type=>"avtobus", :css=>"/home/mouse/Projects/SFA/scrapers/kptrans/trans.css", :where=>"there", :station=>station[:station], :number=>"11")
+  #filemaker.pdf
 end
 
 
