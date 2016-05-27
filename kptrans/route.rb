@@ -50,55 +50,63 @@ class StationHtmlFactory
   end
   
   def table_robochi
-    hours = "<tr  class='hours'>"
-    robochi_hash.keys.each do |key|
-      hours << "<td>#{key}</td>"
-    end
-    hours << "</tr>"
-    minutes = ""
-    max = 0
-    robochi_hash.each do |key, array|
-      max = array.count if max < array.count
-    end
-    max.times do |i|
-      row = "<tr>"
+    if array_robochi
+      hours = "<tr  class='hours'>"
+      robochi_hash.keys.each do |key|
+        hours << "<td>#{key}</td>"
+      end
+      hours << "</tr>"
+      minutes = ""
+      max = 0
       robochi_hash.each do |key, array|
-        if array[i]
-          row << "<td>#{array[i]}</td>"
-        else
-          row << "<td></td>"
-        end
-      end 
-      row << "</tr>"  
-      minutes << row  
+        max = array.count if max < array.count
+      end
+      max.times do |i|
+        row = "<tr>"
+        robochi_hash.each do |key, array|
+          if array[i]
+            row << "<td>#{array[i]}</td>"
+          else
+            row << "<td></td>"
+          end
+        end 
+        row << "</tr>"  
+        minutes << row  
+      end
+      "<table class=\"top\">"+head_robochi+hours+minutes+"</table>"
+    else
+      ""
     end
-    "<table class=\"top\">"+head_robochi+hours+minutes+"</table>"
   end
   
   def table_vyhidni
-    hours = "<tr>"
-    vyhidni_hash.keys.each do |key|
-      hours << "<td class='hours'>#{key}</td>"
-    end
-    hours << "</tr>"
-    minutes = ""
-    max = 0
-    vyhidni_hash.each do |key, array|
-      max = array.count if max < array.count
-    end
-    max.times do |i|
-      row = "<tr>"
+    if array_vyhidni
+      hours = "<tr  class='hours'>"
+      vyhidni_hash.keys.each do |key|
+        hours << "<td>#{key}</td>"
+      end
+      hours << "</tr>"
+      minutes = ""
+      max = 0
       vyhidni_hash.each do |key, array|
-        if array[i]
-          row << "<td>#{array[i]}</td>"
-        else
-          row << "<td></td>"
-        end
-      end 
-      row << "</tr>"  
-      minutes << row  
-    end
-    "<table class=\"top\">"+head_vyhidni+hours+minutes+"</table>"
+        max = array.count if max < array.count
+      end
+      max.times do |i|
+        row = "<tr>"
+        vyhidni_hash.each do |key, array|
+          if array[i]
+            row << "<td>#{array[i]}</td>"
+          else
+            row << "<td></td>"
+          end
+        end 
+        row << "</tr>"  
+        minutes << row  
+      end
+      "<table class=\"top\">"+head_vyhidni+hours+minutes+"</table>"
+     else
+       ""
+     end
   end
   
   def head_robochi
@@ -110,11 +118,17 @@ class StationHtmlFactory
   end
   
   def header
-    "<div class=\"header\"><span class='number'>#{number}</span><img src=\"avt.PNG\" /></span><span class='rout'>#{route}</span></div>"
+    "<div class=\"header\"><span class='number'>#{number}</span><img class='mm' src=\"file:///home/mouse/Projects/SFA/scrapers/kptrans/trol.PNG\" /></span><span class='rout'>#{route}</span></div>"
+  end
+  
+  def footer
+    "<p class='footer'><img class='m' src=\"file:///home/mouse/Projects/SFA/scrapers/kptrans/m.PNG\" /><span>Право на розклад <span>від</span> <img class='mm' src='file:///home/mouse/Projects/SFA/scrapers/kptrans/m2.PNG' /></span></p>"
+    
   end
   
   def body
-    "<body>"+header+table_robochi+table_vyhidni+"</body></html>"
+    
+    "<body>"+header+"<div class='tables'>"+table_robochi+table_vyhidni+"</div>"+footer+"</body></html>"
   end
 
 end
@@ -134,6 +148,7 @@ class Transport
   end
   
   def stations_there(csv)
+
     single(csv).stations_there
   end
   
@@ -145,15 +160,38 @@ class Transport
     single(csv_robochi).route_there
   end
   
+  def route_backagain
+    single(csv_robochi).route_backagain
+  end
+  
   def stations_there_full
-    keys = stations_there(csv_robochi).keys+stations_there(csv_vyhidni).keys
+ 
+
+    if !csv_vyhidni
+
+      keys = stations_there(csv_robochi).keys
+    elsif !csv_robochi
+      keys = stations_there(csv_vyhidni).keys
+    else
+      
+      keys = stations_there(csv_robochi).keys+stations_there(csv_vyhidni).keys
+    end
     keys.uniq!
     array = []
     keys.each do |key|
+      
       hash = {}
       hash[:station] = key
-      hash[:array_robochi] = stations_there(csv_robochi).fetch(key)
-      hash[:array_vyhidni] = stations_there(csv_vyhidni).fetch(key)
+      if !csv_robochi
+        hash[:array_robochi] = nil
+      else
+        hash[:array_robochi] = stations_there(csv_robochi).fetch(key)
+      end
+      if !csv_vyhidni
+        hash[:array_vyhidni] = nil
+      else
+        hash[:array_vyhidni] = stations_there(csv_vyhidni).fetch(key)
+      end
       hash[:number] = number
       hash[:type] = type
       hash[:route] = route_there
@@ -163,18 +201,35 @@ class Transport
   end
 
   def stations_backagain_full
-    keys = stations_backagain(csv_robochi).keys+stations_backagain(csv_vyhidni).keys
+
+    if !csv_vyhidni
+      keys = stations_backagain(csv_robochi).keys
+    elsif !csv_robochi
+      keys = stations_backagain(csv_vyhidni).keys
+    else
+      keys = stations_backagain(csv_robochi).keys+stations_backagain(csv_vyhidni).keys
+    end
     keys.uniq!
     array = []
     keys.each do |key|
       hash = {}
       hash[:station] = key
-      hash[:array_robochi] = stations_backagain(csv_robochi).fetch(key)
-      hash[:array_vyhidni] = stations_backagain(csv_vyhidni).fetch(key)
+      if !csv_robochi
+        hash[:array_robochi] = nil
+      else
+        hash[:array_robochi] = stations_backagain(csv_robochi).fetch(key)
+      end
+      if !csv_vyhidni
+        hash[:array_vyhidni] = nil
+      else
+        hash[:array_vyhidni] = stations_backagain(csv_vyhidni).fetch(key)
+      end
       hash[:number] = number
       hash[:type] = type
-      hash[:route] = route_there
+      hash[:route] = route_backagain
+      array << hash
     end
+    return array
   end
   
   
@@ -192,23 +247,19 @@ class SingleCSV
   end
   
   def route_there
-    csv[4][0].strip
+    csv[4][0].strip.gsub(/"/,"")
   end
   
   def route_backagain
-    subroute = route_there.match(/(.*)\s-/)[1].strip!
-    csv.reverse_each do |c|
-      if c[0]&& c[0].match(subroute)
-        route = c[0].strip!
-        break
-      end
-    end
+    route_arr = route_there.split(" - ")
+
+    route = route_arr[1]+" - "+route_arr[0]
   end
   
   def there
     arr = []
     table.each do |record|
-      if record.empty?
+      if record[0].nil? || record.empty?
         break
       else
         record.compact!
@@ -236,6 +287,7 @@ class SingleCSV
   
   def m_there
     m_there = Matrix[]
+    
     there.each do |t|
       m_there = Matrix.rows(m_there.to_a << t)      
     end
@@ -284,39 +336,62 @@ class FileMaker
   end
   
   def mod_station
-    station.strip.gsub(/"/,"").gsub(/\s/,"_")
+    station.strip.gsub(/"/,"").gsub(/\s/,"_").gsub(/\//,"")
   end
   
   def name
-    puts mod_station
     type+"-"+number+"-"+mod_station+"-"+where+".pdf"
   end
   
   def pdf
-    kit = PDFKit.new(html, :page_size => 'A4')
+    kit = PDFKit.new(html, :page_size => 'A4',:orientation => 'Landscape', :margin_top => '5mm',  :margin_right => '15mm',:margin_left => '15mm',:margin_bottom => '1mm')
     kit.stylesheets << css
-    puts kit.stylesheets
-    file = kit.to_file("/home/mouse/Projects/SFA/scrapers/kptrans/pdfs/"+name)   
+    file = kit.to_file("/home/mouse/Projects/SFA/scrapers/kptrans/pdfs/troleybus/"+where+"/"+name)   
   end
  
 end
 
 
 
-csv = CSV.read("/home/mouse/Projects/SFA/scrapers/kptrans/schedules/avtobus/robochi/robochi_route11.csv", "r:Windows-1251:UTF-8", {:col_sep => ";", :quote_char => "|"})
-csv2 = CSV.read("/home/mouse/Projects/SFA/scrapers/kptrans/schedules/avtobus/vyh/vyhidni_route11.csv", "r:Windows-1251:UTF-8", {:col_sep => ";", :quote_char => "|"})
-
-transport = Transport.new(csv, csv2, "Автобус", 11)
-
-transport.stations_there_full.each do |station|
-  #puts station
-  factory = StationHtmlFactory.new(station)
+#for i in (1..50)
+for i in ["37а","40к","50к"] 
+  csv = nil
+  csv2 = nil
+  filename1 = "/home/mouse/Projects/SFA/scrapers/kptrans/schedules/troleybus/robochi"+i.to_s+".csv"
   
-   File.open('/home/mouse/Projects/SFA/scrapers/kptrans/'+station[:station]+station[:number].to_s+".html", "wb") do |file|
-     file.write factory.html
+  filename2 = "/home/mouse/Projects/SFA/scrapers/kptrans/schedules/troleybus/Тролейбус_"+i.to_s+".csv"
+  
+  if !File.file?(filename1) && !File.file?(filename2)
+    next
   end
-  #filemaker = FileMaker.new(:html=>factory.html, :type=>"avtobus", :css=>"/home/mouse/Projects/SFA/scrapers/kptrans/trans.css", :where=>"there", :station=>station[:station], :number=>"11")
-  #filemaker.pdf
+  if File.file?(filename1)
+    puts filename1
+    csv = CSV.read(filename1, "r:Windows-1251:UTF-8", {:col_sep => ";",:quote_char => "|"})
+    if csv[0][0].match(/,,/)
+      csv = CSV.read(filename1, "r:Windows-1251:UTF-8", {:col_sep => ",",:quote_char => "|"})
+    end
+  end
+  if File.file?(filename2)
+    puts filename2
+    csv2 = CSV.read(filename2, "r:Windows-1251:UTF-8", {:col_sep => ";", :quote_char => "|"}) 
+    if csv2[0][0].match(/,,/)
+      csv2 = CSV.read(filename2, "r:Windows-1251:UTF-8", {:col_sep => ",",:quote_char => "|"})
+    end   
+  end  
+  
+  transport = Transport.new(csv, csv2, "Тролейбус", i)
+
+  transport.stations_backagain_full.each do |station|
+    puts station
+    factory = StationHtmlFactory.new(station)
+    filemaker = FileMaker.new(:html=>factory.html, :type=>"troleybus", :css=>"/home/mouse/Projects/SFA/scrapers/kptrans/trans.css", :where=>"backagain", :station=>station[:station], :number=>i.to_s)
+    filemaker.pdf
+  end
+
 end
+
+
+
+
 
 

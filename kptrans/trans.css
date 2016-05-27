@@ -1,15 +1,72 @@
+@font-face {
+    font-family: "etelkamediumpro-webfont";
+    src: url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/etelkamediumpro-webfont.eot");
+    src: url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/etelkamediumpro-webfont.eot?#iefix") format("embedded-opentype"),
+         url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/etelkamediumpro-webfont.woff") format("woff"),
+         url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/etelkamediumpro-webfont.ttf") format("truetype"),
+         url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/etelkamediumpro-webfont.svg#etelkamediumpro-webfont") format("svg");
+    font-weight: normal;
+    font-style: normal;}
+
+@font-face {
+    font-family: "texgyreheros";
+    src: url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/texgyreheros-regular.eot");
+    src: url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/texgyreheros-regular.eot?#iefix") format("embedded-opentype"),
+         url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/texgyreheros-regular.woff") format("woff"),
+         url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/texgyreheros-regular.ttf") format("truetype"),
+         url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/texgyreheros-regular.svg#EtelkaTextPro") format("svg");
+    font-weight: normal;
+    font-style: normal;}
+
+@font-face {
+    font-family: "texgyreheros";
+    src: url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/texgyreheros-bold.eot");
+    src: url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/texgyreheros-bold.eot?#iefix") format("embedded-opentype"),
+         url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/texgyreheros-bold.woff") format("woff"),
+         url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/texgyreheros-bold.ttf") format("truetype"),
+         url("/home/mouse/Projects/SFA/scrapers/kptrans/fonts/texgyreheros-bold.svg#EtelkaTextPro") format("svg");
+    font-weight: 700;
+    font-style: normal;}
+
 body {
-  padding: 20px;
+
   width: 297mm;
-  height: 210mm
+  height: 220mm;
+  position: relative;
+  font-family: 'texgyreheros';
+  font-size: 20px
 }
  
 .header span {
   margin-right: 10px
 }
-   
+
+table {
+  border-collapse: collapse;
+  margin-bottom: 6mm;
+  display: table;
+  width:297mm;
+}
+
+tbody {
+  display: table;
+  width:333mm;
+}
+
+table tr td {
+  border-left: 1px solid #515151;
+  border-right: 1px solid #515151;
+  text-align: center;
+  padding:0 10px;
+margin-top:-2px
+}
+
 table tr td:first-child {
-  font-weight: 700	
+  border-left: none;
+}
+
+table tr td:last-child {
+  border-right: none;
 }
 
 .header {
@@ -17,7 +74,7 @@ table tr td:first-child {
 }
 
 .number {
-  background-color: #70AD47;
+  background-color: #0097CC;
   padding: 8px 0;
   color: white;
   font-size: 40px;
@@ -27,26 +84,26 @@ table tr td:first-child {
   text-align: center
 }
 
-img {
+img.mm {
   height:70px;
   vertical-align: top
+}
+
+img.m {
+  height:70px;
+  margin-bottom: -5px
 }
 
 .rout {
   font-size: 30px
 }
-	
-table {
-  width: 45%;
-  border-collapse: collapse
-}
-
-table tr td {
-  padding: 10px;
-}
 
 .hours {
   background-color: #E1E1E1
+}
+
+.hours td {
+  font-weight: 700
 }
 
 section span {
@@ -63,9 +120,27 @@ caption {
   text-align: left;
   padding: 10px;
   font-weight: 700;
-  width: 100%;
-  background-color: #70AD47;
+  background-color: #0097CC;
   color: white;
   font-size:18pt;
+}
+
+.footer {
+  position: absolute;
+  bottom: -25mm;
+  left: 5mm
+}
+
+.footer>span {
+  font-size: 20pt
+}
+
+.footer>span>span {
+  font-size: 15pt;
+}
+
+.footer img {
+  height: 10mm;
+  vertical-align: sub
 }
 
